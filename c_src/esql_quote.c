@@ -6,9 +6,12 @@
 static ERL_NIF_TERM quote(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     ErlNifBinary bin;
-    if (enif_inspect_binary(env, argv[0], &bin))
+    if (enif_inspect_iolist_as_binary(env, argv[0], &bin))
     {
         unsigned int count = 0;
+        size_t newsize;
+        ErlNifBinary newbin;
+
         for (unsigned int i = 0; i < bin.size; i++)
         {
             switch (bin.data[i])
@@ -26,20 +29,10 @@ static ERL_NIF_TERM quote(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
             }
         }
 
-        if (count > 0)
-        {
-            size_t newsize;
-            ErlNifBinary newbin;
-
-            newsize = bin.size + count;
-            enif_alloc_binary(newsize, &newbin);
-            quote_str(bin.size, bin.data, newbin.data);
-            return enif_make_binary(env, &newbin);
-        }
-        else
-        {
-            return argv[0];
-        }
+        newsize = bin.size + count + 2;
+        enif_alloc_binary(newsize, &newbin);
+        quote_str(bin.size, bin.data, newbin.data);
+        return enif_make_binary(env, &newbin);
     }
     else
     {
@@ -50,6 +43,7 @@ static ERL_NIF_TERM quote(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 int quote_str(int size, unsigned char* ori, unsigned char* dist)
 {
     int j = 0;
+    dist[j++] = '\'';
     for(int i = 0; i < size; i++)
     {
         switch (ori[i])
@@ -95,6 +89,7 @@ int quote_str(int size, unsigned char* ori, unsigned char* dist)
                 break;
         }
     }
+    dist[j] = '\'';
     return 0;
 }
 
