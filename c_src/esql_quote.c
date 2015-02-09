@@ -3,6 +3,9 @@
 /* niftest.c */
 #include "erl_nif.h"
 
+int quote_str(int size, unsigned char* ori, unsigned char* dist);
+
+
 static ERL_NIF_TERM quote(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     ErlNifBinary bin;
