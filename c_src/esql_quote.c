@@ -2,8 +2,9 @@
 
 /* niftest.c */
 #include "erl_nif.h"
+#include "string.h"
 
-int quote_str(int size, unsigned char* ori, unsigned char* dist);
+int quote_str(size_t size, unsigned char* ori, unsigned char* dist);
 
 
 static ERL_NIF_TERM quote(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
@@ -12,10 +13,11 @@ static ERL_NIF_TERM quote(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     if (enif_inspect_iolist_as_binary(env, argv[0], &bin))
     {
         unsigned int count = 0;
+        unsigned int i = 0;
         size_t newsize;
         ErlNifBinary newbin;
 
-        for (unsigned int i = 0; i < bin.size; i++)
+        for (i = 0; i < bin.size; i++)
         {
             switch (bin.data[i])
             {
@@ -43,11 +45,12 @@ static ERL_NIF_TERM quote(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     }
 }
 
-int quote_str(int size, unsigned char* ori, unsigned char* dist)
+int quote_str(size_t size, unsigned char* ori, unsigned char* dist)
 {
-    int j = 0;
+    size_t i = 0;
+    size_t j = 0;
     dist[j++] = '\'';
-    for(int i = 0; i < size; i++)
+    for(i = 0; i < size; i++)
     {
         switch (ori[i])
         {
