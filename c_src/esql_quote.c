@@ -6,14 +6,13 @@
 
 int quote_str(size_t size, unsigned char* ori, unsigned char* dist);
 
-
 static ERL_NIF_TERM quote(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     ErlNifBinary bin;
     if (enif_inspect_iolist_as_binary(env, argv[0], &bin))
     {
-        unsigned int count = 0;
-        unsigned int i = 0;
+        size_t count = 0;
+        size_t i = 0;
         size_t newsize;
         ErlNifBinary newbin;
 
@@ -99,9 +98,19 @@ int quote_str(size_t size, unsigned char* ori, unsigned char* dist)
     return 0;
 }
 
+static int on_load(ErlNifEnv* env, void** priv_data, ERL_NIF_TERM load_info)
+{
+    return 0;
+}
+
+static int on_upgrade(ErlNifEnv* env, void** priv_data, void** old_priv_data, ERL_NIF_TERM load_info)
+{
+    return 0;
+}
+
 static ErlNifFunc nif_funcs[] =
 {
     {"quote", 1, quote}
 };
 
-ERL_NIF_INIT(esql_quote,nif_funcs,NULL,NULL,NULL,NULL)
+ERL_NIF_INIT(esql_quote,nif_funcs,on_load,NULL,on_upgrade,NULL)
